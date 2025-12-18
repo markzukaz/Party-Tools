@@ -352,7 +352,7 @@ with tab2:
     left, right = st.columns([2, 3])
 
     with left:
-        st.markdown("## 👤 เลือกผู้เล่น (คลิกเป็นการ์ด)")
+        st.markdown("## 👤 เลือกผู้เล่น")
         st.session_state.selected_player = card_picker(
             title="Players",
             items=st.session_state.buddy_list,
@@ -409,7 +409,7 @@ with tab2:
             st.success("อัปเดตแล้ว ✅")
 
     with right:
-        st.markdown("## 🎡 วงล้อบทลงโทษ (กราฟิก)")
+        st.markdown("## 🎡 วงล้อบทลงโทษ")
 
         player = st.session_state.selected_player
         if not player:
@@ -469,7 +469,7 @@ with tab2:
 # 3) Buddy–Budder pairing (1-1; remove budder)
 # -----------------------------
 with tab3:
-    st.subheader("3) Buddy–Budder (จับคู่ 1-1 แล้วตัด Budder ออกจากพูล)")
+    st.subheader("3) Buddy–Budder")
 
     topL, topR = st.columns([1, 1])
     with topL:
@@ -489,7 +489,7 @@ with tab3:
     left, mid, right = st.columns([2, 1, 2])
 
     with left:
-        st.markdown("### 👈 เลือก Buddy (กดเป็นการ์ด)")
+        st.markdown("### 👈 เลือก Buddy")
         st.session_state.selected_buddy = card_picker(
             title="Buddy",
             items=st.session_state.buddy_list,
@@ -498,7 +498,7 @@ with tab3:
         )
 
     with right:
-        st.markdown("### Budder 👉 (กดเป็นการ์ด)")
+        st.markdown("### Budder 👉")
         st.session_state.selected_budder = card_picker(
             title="Budder",
             items=st.session_state.budder_list,
