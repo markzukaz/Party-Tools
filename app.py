@@ -3,7 +3,7 @@ import random
 import time
 import json
 import streamlit.components.v1 as components
-
+import re
 st.set_page_config(page_title="Party Tools", page_icon="🎡", layout="wide")
 
 # -----------------------------
@@ -61,7 +61,15 @@ def expand_weighted_labels(punish_items):
     expanded = shuffle_avoid_adjacent_same(expanded, max_tries=80)
     return expanded
 
-
+def parse_eel_points(label: str):
+    """
+    ดึงเลขหลังคำว่า 'แทงปลาไหล' เช่น '... แทงปลาไหล 40' -> 40
+    ถ้าไม่มี -> None
+    """
+    if not label:
+        return None
+    m = re.search(r"แทงปลาไหล\s*(\d+)", str(label))
+    return int(m.group(1)) if m else None
 # -----------------------------
 # State init
 # -----------------------------
@@ -76,16 +84,77 @@ def init_state():
     ss.setdefault("reward_wheel_labels", None)  # shuffled labels for display
 
     # Buddy list
-    ss.setdefault("buddy_list", ["A", "B", "C", "D"])
+    ss.setdefault("buddy_list", [
+    "พี่ปั๊ป",
+    "น้องอ่าย",
+    "พี่ป้อง",
+    "หมอไนท์",
+    "หมอพีท",
+    "หมอกานต์",
+    "พี่แบงค์",
+    "พี่วัจน์",
+    "ป๊อป AR",
+    "แอ๊น",
+    "นันทิชา",
+    "พิม Asst",
+    "แนน Asst.",
+    "สตางค์ Admin",
+    "บี๋ ACC",
+    "MARK",
+    "อามร์",
+    "แนท DEV",
+    "อีฟ Pur",
+    "เจน IB",
+    "โจ๊ค DRN",
+    "พราว RN",
+    "เมย์ RN",
+    "พี่แอน RN",
+    "ฟ้าใส HPH",
+    "พี่บี PH",
+    "แอม PH",
+    "เขต",
+    "แจน PH",
+    "หนุงหนิง",
+    "ตอง",
+    "เดียร์",
+    "ชมพู่",
+    "มะปราง",
+    "เดียร์น่า",
+    "หลิน",
+    "โอม PMD",
+    "นัท PMD",
+    "ฟ้า PMD",
+    "บังเจี๊ยบ DV",
+    "เมย์ HK",
+    "บังหมาน DV",
+    "หมูแป้ง",
+    "แนน PH",
+    "สมา",
+    "เบญ",
+    "นี",
+    "เอ้",
+    "ตุ๊ก",
+    "หลิว",
+    "จิ๋ม",
+    "เมย์ IB",
+    "อ้อน IB",
+    "ยาหยี IB",
+    "น้าพง",
+    "โดม",
+    "อู",
+    "อาคา",
+    "ปาย",
+])
     ss.setdefault("selected_player", None)
 
     # Punishment config
     ss.setdefault("punish_items", [
-        {"label": "ดื่ม 3 วินาที", "seconds": 3, "weight": 5},
-        {"label": "ดื่ม 5 วินาที", "seconds": 5, "weight": 4},
-        {"label": "ดื่ม 8 วินาที", "seconds": 8, "weight": 3},
-        {"label": "ดื่ม 12 วินาที", "seconds": 12, "weight": 2},
-        {"label": "ดื่ม 20 วินาที", "seconds": 20, "weight": 1},
+        {"label": "ดื่ม 0 วินาที", "seconds": 0, "weight": 1},
+        {"label": "ดื่ม 1 วินาที หรือ แทงปลาไหล 20", "seconds": 1, "weight": 1},
+        {"label": "ดื่ม 2 วินาที หรือ แทงปลาไหล 30", "seconds": 2, "weight": 2},
+        {"label": "ดื่ม 3 วินาที หรือ แทงปลาไหล 40", "seconds": 3, "weight": 3},
+        {"label": "ดื่ม 4 วินาที หรือ แทงปลาไหล 50", "seconds": 4, "weight": 2},
+        {"label": "ดื่ม 5 วินาที หรือ แทงปลาไหล 60", "seconds": 5, "weight": 1},
     ])
     ss.setdefault("punish_last", None)
     ss.setdefault("punish_remove_after", False)
@@ -93,7 +162,44 @@ def init_state():
     ss.setdefault("punish_wheel_labels", None)  # shuffled expanded labels for display
 
     # Buddy–Budder
-    ss.setdefault("budder_list", ["A", "B", "C", "D"])
+    ss.setdefault("budder_list", [
+    "พี่ปั๊ป",
+    "น้องอ่าย",
+    "พี่ป้อง",
+    "หมอไนท์",
+    "หมอพีท",
+    "หมอกานต์",
+    "พี่แบงค์",
+    "พี่วัจน์",
+    "ป๊อป AR",
+    "แอ๊น",
+    "นันทิชา",
+    "พิม Asst",
+    "แนน Asst.",
+    "สตางค์ Admin",
+    "บี๋ ACC",
+    "MARK",
+    "อามร์",
+    "แนท DEV",
+    "อีฟ Pur",
+    "เจน IB",
+    "โจ๊ค DRN",
+    "พราว RN",
+    "เมย์ RN",
+    "พี่แอน RN",
+    "ฟ้าใส HPH",
+    "พี่บี PH",
+    "แอม PH",
+    "เขต",
+    "แจน PH",
+    "หนุงหนิง",
+    "ตอง",
+    "เดียร์",
+    "ชมพู่",
+    "มะปราง",
+    "เดียร์น่า",
+    "หลิน",
+])
     ss.setdefault("pairs", [])
     ss.setdefault("selected_buddy", None)
     ss.setdefault("selected_budder", None)
@@ -441,16 +547,22 @@ with tab2:
                     label = wheel_labels[winner_idx]
                     chosen = next((x for x in effective_items if x["label"] == label), {"label": label, "seconds": 0, "weight": 1})
 
-                    # ✅ เป้าหมายใหม่: Mark แสดง 0 วิจริง ๆ
-                    seconds_to_show = 0 if is_mark else int(chosen.get("seconds", 0))
+                    eel_points = parse_eel_points(chosen.get("label", ""))
 
+                    # ถ้าเป็นกติกา "MARK = 0 เสมอ" (แบบเปิดเผย) ก็ใช้บรรทัดนี้ต่อได้
+                    seconds_to_show = 0 if is_mark else int(chosen.get("seconds", 0))
+                    
                     st.session_state.punish_last = {
                         "player": player,
                         "label": chosen.get("label"),
                         "seconds": seconds_to_show,
+                        "eel_points": eel_points,
                     }
-                    st.success(f"ผล: {player} → {seconds_to_show} วินาที")
-                    # st.success(f"ผล: {player} → {chosen.get('label')} ({seconds_to_show} วินาที)")
+
+                    msg = f"ผล: {player} → ดื่ม {seconds_to_show} วินาที"
+                    if eel_points is not None:
+                        msg += f" หรือ แทงปลาไหล {eel_points}"
+                    st.success(msg)
 
                     # remove after (ไม่ให้ตัดตอน Mark)
                     if st.session_state.punish_remove_after and not is_mark:
